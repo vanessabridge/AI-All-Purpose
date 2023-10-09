@@ -59,7 +59,7 @@ def main():
 
     # Load data from files into memory
     print("Loading data...")
-    load_data("small")
+    load_data(directory)
     print("Data loaded.")
 
     source = person_id_for_name(input("Name: "))
@@ -95,7 +95,7 @@ def shortest_path(source, target):
     co_stars = neighbors_for_person(source)
     queue = QueueFrontier()
     actorIds = set()    
-   
+   # Add list of co stars for source
     for movie, actor in co_stars:
         if actor == target:
             return [(movie,actor)]
@@ -103,7 +103,7 @@ def shortest_path(source, target):
             node = Node(actor,source,movie)
             actorIds.add(actor)
             queue.add(node)
-
+    # If none of the co-stars are the target we do BFS search and keep adding more costars
     while queue.empty():
         current = queue.remove()
         if current.actor == target:
@@ -115,7 +115,7 @@ def shortest_path(source, target):
                     actorIds.add(actor)
                     node = Node(actor,current,movie)
                     queue.add(node)
-    
+    # If none of the actors in the queue are the target return none
     return None 
 
 def get_actors_list(node):
