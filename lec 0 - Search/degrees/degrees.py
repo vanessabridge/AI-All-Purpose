@@ -59,7 +59,7 @@ def main():
 
     # Load data from files into memory
     print("Loading data...")
-    load_data(directory)
+    load_data("small")
     print("Data loaded.")
 
     source = person_id_for_name(input("Name: "))
@@ -91,14 +91,40 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
-    shortest_path = []
-    while True:
-        if source ==(target):
-            return ()
 
-    else:
-        return None
+    co_stars = neighbors_for_person(source)
+    queue = QueueFrontier()
+    actorIds = set()    
+   
+    for movie, actor in co_stars:
+        if actor == target:
+            return [(movie,actor)]
+        if actor not in actorIds:    
+            node = Node(actor,source,movie)
+            actorIds.add(actor)
+            queue.add(node)
 
+    while queue.empty():
+        current = queue.remove()
+        if current.actor == target:
+            return get_actors_list(current)
+        else:
+            co_stars = neighbors_for_person(current.actor)
+            for movie, actor in co_stars:
+                if actor not in actorIds:
+                    actorIds.add(actor)
+                    node = Node(actor,current,movie)
+                    queue.add(node)
+    
+    return None 
+
+def get_actors_list(node):
+    path = []
+    while node.parent is not None:
+        path.append((node.movie,node.actor))
+        node = node.parent
+    
+    return path.reversed()
 
 
 def person_id_for_name(name):
@@ -107,6 +133,7 @@ def person_id_for_name(name):
     resolving ambiguities as needed.
     """
     person_ids = list(names.get(name.lower(), set()))
+    print("Persons ids:",person_ids)
     if len(person_ids) == 0:
         return None
     elif len(person_ids) > 1:
