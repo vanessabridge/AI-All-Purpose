@@ -94,37 +94,39 @@ def shortest_path(source, target):
 
     co_stars = neighbors_for_person(source)
     queue = QueueFrontier()
-    actorIds = set()    
+    actorIds = set()
+    start = Node(source,None,None)    
    # Add list of co stars for source
     for movie, actor in co_stars:
         if actor == target:
             return [(movie,actor)]
         if actor not in actorIds:    
-            node = Node(actor,source,movie)
+            node = Node(actor,start,movie)
             actorIds.add(actor)
             queue.add(node)
+    queue.add(start)
+
     # If none of the co-stars are the target we do BFS search and keep adding more costars
-    while queue.empty():
+    while True:
+        if queue.empty():
+            # If none of the actors in the queue are the target return none
+            return None
         current = queue.remove()
-        if current.actor == target:
-            return get_actors_list(current)
+        if current.state == target:
+            path = []
+            while current.parent is not None:
+                path.append((current.action,current.state))
+                current = current.parent
+            return path.reverse()
         else:
-            co_stars = neighbors_for_person(current.actor)
+            co_stars = neighbors_for_person(current.state)
             for movie, actor in co_stars:
+                
                 if actor not in actorIds:
                     actorIds.add(actor)
                     node = Node(actor,current,movie)
                     queue.add(node)
-    # If none of the actors in the queue are the target return none
-    return None 
-
-def get_actors_list(node):
-    path = []
-    while node.parent is not None:
-        path.append((node.movie,node.actor))
-        node = node.parent
     
-    return path.reversed()
 
 
 def person_id_for_name(name):
