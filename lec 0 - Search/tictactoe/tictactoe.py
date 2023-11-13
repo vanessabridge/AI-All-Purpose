@@ -112,5 +112,16 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
+    all_possible_actions = actions(board)
+    new_board_score=[]
+    for action in all_possible_actions:
+        new_board = result(board,action)
+        score = utility(new_board)
+        new_board_score.append((score,action))
     
-    raise NotImplementedError
+
+def max_value(board):
+    return 0
+
+def min_value(board):
+    return 0
